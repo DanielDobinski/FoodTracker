@@ -10,7 +10,7 @@ Window {
     title: "FoodTrack - TitanTrack Pro"
     color: "#000000"
 
-    // View States
+    // --- LOGIC STATES ---
     property bool showingHistory: false
     property int graphRange: 7
 
@@ -110,7 +110,7 @@ Window {
 
                 Item { Layout.fillWidth: true } // Spacer
 
-                // Small Reset Button
+                // Small Reset Button (to the left of History)
                 Button {
                     text: "RESET"
                     onClicked: healthCtrl.resetDay()
@@ -240,7 +240,7 @@ Window {
                         }
                     }
 
-                    // HISTORY VIEW
+                    // HISTORY VIEW (Graph)
                     ColumnLayout {
                         visible: showingHistory
                         Layout.fillWidth: true
@@ -267,22 +267,32 @@ Window {
                             color: "#111"; radius: 12; border.color: "#222"
 
                             Row {
-                                anchors.bottom: parent.bottom; anchors.bottomMargin: 15
+                                anchors.bottom: parent.bottom; anchors.bottomMargin: 30
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                height: parent.height - 60
+                                height: parent.height - 80
                                 spacing: graphRange === 7 ? 12 : 2
 
                                 Repeater {
-                                    model: healthCtrl.history.slice(-graphRange)
-                                    Rectangle {
-                                        width: (graphCanvas.width - 60) / graphRange
-                                        height: Math.max(2, (parseInt(modelData.split(",")[1]) / 4500) * parent.height)
+                                    // Binding to healthCtrl.history and slicing for the range
+                                    model: healthCtrl.history ? healthCtrl.history.slice(-graphRange) : []
+
+                                    delegate: Rectangle {
+                                        width: Math.max(2, (graphCanvas.width - 60) / graphRange)
+                                        // Scaling based on 4500 kcal max
+                                        height: {
+                                            let parts = modelData.split(",")
+                                            let kcal = parts.length > 1 ? parseInt(parts[1]) : 0
+                                            return Math.max(2, (kcal / 4500) * parent.height)
+                                        }
                                         color: "#3498db"; radius: 2; anchors.bottom: parent.bottom
 
+                                        // Date Label (only for 7-day view)
                                         Text {
                                             visible: graphRange === 7
-                                            text: modelData.split(",")[1]
-                                            color: "#7f8c8d"; font.pixelSize: 8; anchors.bottom: parent.top; anchors.horizontalCenter: parent.horizontalCenter
+                                            text: modelData.split(",")[0].substring(5) // MM-DD
+                                            color: "#555"; font.pixelSize: 9
+                                            anchors.top: parent.bottom; anchors.topMargin: 5
+                                            anchors.horizontalCenter: parent.horizontalCenter
                                         }
                                     }
                                 }

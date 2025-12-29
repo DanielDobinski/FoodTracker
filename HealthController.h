@@ -18,6 +18,7 @@ class HealthController : public QObject {
     Q_PROPERTY(int dailyTarget READ dailyTarget NOTIFY statsChanged)
     Q_PROPERTY(int consumedCalories READ consumedCalories NOTIFY statsChanged)
     Q_PROPERTY(double hydrationProgress READ hydrationProgress NOTIFY statsChanged)
+    Q_PROPERTY(QStringList history READ history NOTIFY historyChanged)
 
 public:
     explicit HealthController(QObject *parent = nullptr);
