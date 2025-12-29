@@ -5,7 +5,7 @@
 *This project is developed using **C++**, **Qt 6**, , combining the power of a robust framework with a modern, high-performance immediate-mode GUI.*
 
 # Application Preview
-![image](https://github.com/DanielDobinski/FoodTracker/tree/master/github/app.png)
+![image](https://github.com/DanielDobinski/FoodTracker/blob/master/github/app.png)
 
 ### Video Presentation
 [![FoodTracker Demo](https://img.youtube.com/vi/5NVcK8g8kuk/0.jpg)](https://www.youtube.com/watch?v=5NVcK8g8kuk)
