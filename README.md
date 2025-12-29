@@ -1,49 +1,39 @@
-# Dear ImGui with GLFW + OpenGL3
+# FoodTracker - Personalized Nutrition & Health Monitor
 
-[**Dear ImGui**](https://github.com/ocornut/imgui) is a bloat-free graphical user interface library for C++. It outputs optimized vertex buffers that you can render anytime in your 3D-pipeline-enabled application. It is fast, portable, renderer agnostic, and self-contained (no external dependencies).
+**FoodTracker** is a desktop application built for users who want to stay on top of their fitness goals. It allows for efficient logging of daily food intake, monitoring macronutrients, and tracking body metrics like weight and BMI. 
 
-*This sample uses Dear ImGui with GLFW + OpenGL3*
+*This project is developed using **C++**, **Qt 6**, and **Dear ImGui**, combining the power of a robust framework with a modern, high-performance immediate-mode GUI.*
 
-[**GLFW**](https://www.glfw.org/) (Graphics Library Framework) is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop. It provides a simple API for creating windows, contexts and surfaces, receiving input and events.
+# Application Preview
+![Application Screenshot](app.png)
 
-[**OpenGL**](https://www.opengl.org/) (Open Graphics Library) is a cross-language, cross-platform application programming interface (API) for rendering 2D and 3D vector graphics. The API is typically used to interact with a graphics processing unit (GPU), to achieve hardware-accelerated rendering.
+### Video Presentation
+[![FoodTracker Demo](https://img.youtube.com/vi/5NVcK8g8kuk/0.jpg)](https://www.youtube.com/watch?v=5NVcK8g8kuk)
+*Click the image above to watch the app in action.*
 
-# Game Play
-![image](https://github.com/DanielDobinski/Pacman/blob/main/game_play/game2.PNG)
-![image](https://github.com/DanielDobinski/Pacman/blob/main/game_play/game1.PNG)
-[![YouTube](https://github.com/DanielDobinski/Pacman/blob/main/game_play/gameYT.png)](https://youtu.be/ZynEebJM1h8)
-
-
-
+## Key Features
+- **Macronutrient Tracking:** Log calories, proteins, fats, and carbs with ease.
+- **Body Progress:** Keep track of your weight (Current: XXX kg, Height: 190 cm) and physical measurements.
+- **Performance Focused:** Fast UI interactions powered by OpenGL/Dear ImGui integration.
+- **Custom Food Database:** Save your favorite meals to speed up the logging process.
 
 ## Install and Configure
-### On Windows
-Install dependencies using [vcpkg - (VC++ Package Manager)](https://vcpkg.io/en/index.html) 
+
+### Prerequisites
+- **Qt 6.x** (installed via Qt Online Installer)
+- **CMake** 3.16 or newer
+- **C++20** compatible compiler (MinGW or MSVC)
+- **vcpkg** (optional, for dependency management)
+
+### Building from Source
 ```bash
-# Clone this repository with recursive option
-> cd Pacman
-> git clone --recursive https://github.com/microsoft/vcpkg
+# 1. Clone the repository
+> git clone [https://github.com/DanielDobinski/FoodTracker.git](https://github.com/DanielDobinski/FoodTracker.git)
+> cd FoodTracker
 
-# Run the bootstrap script for vcpkg
-> .\vcpkg\bootstrap-vcpkg.bat
+# 2. Configure the project
+# Replace the path with your actual Qt installation path
+> cmake . -B build/ -DCMAKE_PREFIX_PATH="C:/Qt/6.x.x/mingw_64" 
 
-# Install dependencies using vcpkg manifest (vcpkg.json)
-> .\vcpkg\vcpkg install 
-
-# Compile and Run
-> cmake . -B build/
-> cmake --build build
-> build\Debug\ImGui-GLFW-OpenGL3.exe
-
-#download and place Irrklang for sound from [here](https://www.ambiera.com/irrklang/downloads.html)
-#Place irrklang.dll and ikpMP3.dll in the same place as exe file is created
-```
-
-## Credits
-- Cmake for ImGui - https://github.com/sukesh-ak/ImGui-GLFW-OpenGL3
-  (Creator of ImGui prefers not to provide any cmakes to make it clear that ImGui can run platform independent)
-- Dear ImGui - https://github.com/ocornut/imgui  
-- GLFW - https://www.glfw.org/  
-- OpenGL - https://www.opengl.org/  
-- LearnOpenGL - https://learnopengl.com/ - most of it created on the Arcade Game Tutorial
-
+# 3. Build the application
+> cmake --build build --config Release
