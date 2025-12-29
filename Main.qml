@@ -7,14 +7,15 @@ Window {
     width: 400
     height: 750
     visible: true
-    title: "TitanTrack - Professional Fitness Tracker"
+    title: "FoodTrack - Professional Fitness Tracker"
     color: "#000000"
 
-    ColumnLayout {
-        anchors.fill: parent
+    ColumnLayout
+    {
+        anchors.fill: parent // Flexible layout based on window
         spacing: 0
 
-        // --- 1. SEKCJA NAGŁÓWKA (30% WYSOKOŚCI) ---
+        // --- 1. HEADER SECTION (30% OF HEIGHT) ---
         Item {
             id: headerSection
             Layout.fillWidth: true
@@ -29,7 +30,7 @@ Window {
                 opacity: 1.0
             }
 
-            // Gradient wtapiający obrazek w czarne tło dołu
+            // Gradient to blend the image into the black background below
             Rectangle {
                 anchors.fill: parent
                 gradient: Gradient {
@@ -39,7 +40,7 @@ Window {
             }
 
             Text {
-                text: "Witaj, Siłaczu!"
+                text: "Health Tracker"
                 anchors.centerIn: parent
                 font.pixelSize: parent.height * 0.15
                 font.bold: true
@@ -49,7 +50,7 @@ Window {
             }
         }
 
-        // --- 2. SEKCJA INTERAKTYWNA (70% WYSOKOŚCI) ---
+        // --- 2. INTERACTIVE SECTION (70% OF HEIGHT) ---
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -59,12 +60,12 @@ Window {
                 anchors.margins: 25
                 spacing: 20
 
-                // KARTA KALORII (Poprawione skalowanie)
+                // CALORIE CARD (Scalable layout)
                 Rectangle {
                     id: calorieCard
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.maximumHeight: 140 // Nieco wyższa karta
+                    Layout.maximumHeight: 140
                     Layout.minimumHeight: 100
                     color: "#2980b9"
                     radius: 15
@@ -77,9 +78,9 @@ Window {
                         spacing: 2
 
                         Text {
-                            text: "SPOŻYTE KALORIE"
+                            text: "CALORIES CONSUMED"
                             color: "#d0e4f2"
-                            font.pixelSize: parent.height * 0.18 // Większy label
+                            font.pixelSize: parent.height * 0.18
                             font.letterSpacing: 1
                             Layout.alignment: Qt.AlignHCenter
                         }
@@ -88,7 +89,7 @@ Window {
                             id: mainCalorieText
                             text: healthCtrl.consumedCalories + " / " + healthCtrl.dailyTarget + " kcal"
                             color: "white"
-                            // Zmieniamy na stałą wartość minimalną + skalowanie, żeby nie był za mały
+                            // Minimum value + scaling to ensure readability
                             font.pixelSize: Math.max(24, parent.height * 0.35)
                             font.bold: true
                             Layout.alignment: Qt.AlignHCenter
@@ -96,12 +97,12 @@ Window {
                     }
                 }
 
-                // PASEK HYDRACJI
+                // HYDRATION PROGRESS BAR
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 8
                     Text {
-                        text: "DZISIEJSZA HYDRACJA"
+                        text: "DAILY HYDRATION"
                         color: "#7f8c8d"
                         font.pixelSize: 14
                         font.bold: true
@@ -131,7 +132,7 @@ Window {
                     }
                 }
 
-                // PRZYCISKI AKCJI (Rosną razem z oknem)
+                // ACTION BUTTONS (Dynamic scaling)
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -140,7 +141,7 @@ Window {
 
                     Button {
                         id: waterBtn
-                        text: "DODAJ WODĘ"
+                        text: "ADD WATER"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
@@ -163,7 +164,7 @@ Window {
 
                     Button {
                         id: foodBtn
-                        text: "DODAJ POSIŁEK"
+                        text: "ADD MEAL"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
@@ -185,9 +186,9 @@ Window {
                     }
                 }
 
-                // PRZYCISK RESET (Jasny i kontrastowy)
+                // RESET BUTTON (High contrast)
                 Button {
-                    text: "RESETUJ POSTĘP DNIA"
+                    text: "RESET DAILY PROGRESS"
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Layout.maximumHeight: 55
@@ -207,10 +208,10 @@ Window {
                     onClicked: healthCtrl.resetDay()
                 }
 
-                // ELEMENT ROZPOROWY (Spacer)
+                // SPACER ELEMENT
                 Item { Layout.fillHeight: true }
 
-                // --- STOPKA (FOOTER) ---
+                // --- FOOTER SECTION ---
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 4
@@ -224,12 +225,12 @@ Window {
                         font.underline: true
 
                         TapHandler {
-                            onTapped: console.log("Link do App Store")
+                            onTapped: console.log("App Store Link clicked")
                         }
                     }
 
                     Text {
-                        text: "TitanTrack Sp. z o.o."
+                        text: "TitanTrack Ltd."
                         Layout.alignment: Qt.AlignHCenter
                         color: "#95a5a6"
                         font.pixelSize: 12
@@ -237,7 +238,7 @@ Window {
                     }
 
                     Text {
-                        text: "ul. Piotrkowska 100, 90-001 Łódź"
+                        text: "100 Piotrkowska St, 90-001 Lodz"
                         Layout.alignment: Qt.AlignHCenter
                         color: "#7f8c8d"
                         font.pixelSize: 11

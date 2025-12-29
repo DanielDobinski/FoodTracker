@@ -6,33 +6,33 @@
 #include <QDebug>
 #include <cmath>
 
-HealthController::HealthController(QObject *parent)
-    : QObject(parent)
+HealthController::HealthController(QObject *parent) : QObject(parent)
 {
-    // Inicjalizacja Twoich danych bazowych
+    // Initialize base user data (105kg, 189cm, 33 years old)
     m_weight = 105.0;
     m_height = 189.0;
     m_age = 33;
 
-    // Obliczamy zapotrzebowanie (BMR) przy starcie
+    // Calculate Basal Metabolic Rate (BMR) at startup
     calculateBMR();
 
-    // Próba wczytania zapisanych danych z dzisiaj
+    // Attempt to load previously saved data for today
     loadData();
 }
 
 void HealthController::calculateBMR() {
-    // Wzór Mifflin-St Jeor dla mężczyzn:
-    // P = 10 * waga + 6.25 * wzrost - 5 * wiek + 5
+    // Mifflin-St Jeor Equation for men:
+    // P = 10 * weight + 6.25 * height - 5 * age + 5
     m_bmr = static_cast<int>(10 * m_weight + 6.25 * m_height - 5 * m_age + 5);
 
-    // Dodajemy mały mnożnik aktywności (lekka aktywność sportowa)
+    // Apply a light activity multiplier (typical for fitness enthusiasts)
     m_bmr *= 1.2;
 }
 
 double HealthController::bmi() const {
-    // BMI = kg / m^2
+    // BMI Formula: kg / m^2
     double heightInMeters = m_height / 100.0;
+    if (heightInMeters <= 0) return 0;
     return m_weight / (heightInMeters * heightInMeters);
 }
 
@@ -45,16 +45,18 @@ int HealthController::consumedCalories() const {
 }
 
 double HealthController::hydrationProgress() const {
-    // Zakładamy cel 3.5 litra dla osoby o Twojej masie
+    // Target set to 3.5 liters based on your body mass
     double target = 3.5;
     double progress = m_consumedWater / target;
+
+    // Clamp progress to 1.0 (100%) so the UI bar doesn't overflow
     return (progress > 1.0) ? 1.0 : progress;
 }
 
 void HealthController::addMeal(int calories) {
     if (calories > 0) {
         m_consumedCalories += calories;
-        emit statsChanged(); // Powiadamiamy QML o zmianie!
+        emit statsChanged(); // Notify QML UI to refresh data!
         saveData();
     }
 }
@@ -62,7 +64,7 @@ void HealthController::addMeal(int calories) {
 void HealthController::addWater(double liters) {
     if (liters > 0) {
         m_consumedWater += liters;
-        emit statsChanged();
+        emit statsChanged(); // Notify QML UI to refresh data!
         saveData();
     }
 }
@@ -74,12 +76,12 @@ void HealthController::resetDay() {
     saveData();
 }
 
-// --- Logika zapisu danych (Persistence) ---
+// --- Data Persistence Logic ---
 
 void HealthController::saveData() {
-    // Zapisujemy w folderze AppData użytkownika
+    // Save to the user's system AppData folder
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QDir().mkpath(path); // Upewnij się, że folder istnieje
+    QDir().mkpath(path); // Ensure the directory exists
 
     QFile file(path + "/daily_stats.txt");
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -87,7 +89,7 @@ void HealthController::saveData() {
         out << m_consumedCalories << "\n";
         out << m_consumedWater << "\n";
         file.close();
-        qDebug() << "Dane zapisane w: " << file.fileName();
+        qDebug() << "Data saved successfully to:" << file.fileName();
     }
 }
 
@@ -100,6 +102,8 @@ void HealthController::loadData() {
         m_consumedCalories = in.readLine().toInt();
         m_consumedWater = in.readLine().toDouble();
         file.close();
+
+        // Notify the UI that loaded data is ready for display
         emit statsChanged();
     }
 }
