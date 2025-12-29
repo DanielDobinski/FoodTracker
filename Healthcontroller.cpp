@@ -8,15 +8,36 @@
 
 HealthController::HealthController(QObject *parent) : QObject(parent)
 {
-    // Initialize base user data (105kg, 189cm, 33 years old)
     m_weight = 105.0;
     m_height = 189.0;
     m_age = 33;
-
-    // Calculate Basal Metabolic Rate (BMR) at startup
     calculateBMR();
 
-    // Attempt to load previously saved data for today
+    // --- Hardcoded History Injection ---
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir().mkpath(path);
+    QString filePath = path + "/daily_stats.txt";
+    QFile file(filePath);
+
+    // We open in WriteOnly to ensure the file is exactly these 31 days every startup
+    // Change to Append or check if exists if you want to keep data between sessions later
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << "2025-11-29,2950,3.2\n2025-11-30,3100,3.5\n2025-12-01,2800,3.0\n"
+            << "2025-12-02,3450,4.0\n2025-12-03,2700,3.1\n2025-12-04,3200,3.5\n"
+            << "2025-12-05,3050,3.3\n2025-12-06,2900,3.5\n2025-12-07,3600,4.2\n"
+            << "2025-12-08,3100,3.5\n2025-12-09,2750,2.8\n2025-12-10,3300,3.7\n"
+            << "2025-12-11,3150,3.5\n2025-12-12,2850,3.0\n2025-12-13,3000,3.4\n"
+            << "2025-12-14,3550,3.9\n2025-12-15,3200,3.5\n2025-12-16,2950,3.2\n"
+            << "2025-12-17,3100,3.6\n2025-12-18,2800,3.1\n2025-12-19,3400,3.8\n"
+            << "2025-12-20,3250,3.5\n2025-12-21,2900,3.3\n2025-12-22,3050,3.5\n"
+            << "2025-12-23,3700,4.5\n2025-12-24,3300,3.5\n2025-12-25,3500,3.0\n"
+            << "2025-12-26,2800,3.5\n2025-12-27,3150,3.4\n2025-12-28,3000,3.5\n"
+            << "2025-12-29,100,0\n";
+        file.close();
+    }
+
+    // Now load it normally so m_history and dashboard values are populated
     loadData();
 }
 
