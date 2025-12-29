@@ -119,16 +119,40 @@ bool HealthController::saveData() {
 }
 
 void HealthController::loadData() {
-    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QFile file(path + "/daily_stats.txt");
+    // 1. Point to your specific file
+    // If the file is in the project folder, use a relative path.
+    // If it's in the AppData folder, use QStandardPaths.
+    QString filePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/daily_stats.txt";
+    QFile file(filePath);
 
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&file);
-        m_consumedCalories = in.readLine().toInt();
-        m_consumedWater = in.readLine().toDouble();
-        file.close();
-
-        // Notify the UI that loaded data is ready for display
-        emit statsChanged();
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Could not open file at:" << filePath;
+        return;
     }
+
+    m_history.clear();
+    QTextStream in(&file);
+
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (!line.isEmpty()) {
+            m_history.append(line);
+        }
+    }
+    file.close();
+
+    // 2. Automatically update today's dashboard if today's date is in the file
+    QString today = QDate::currentDate().toString(Qt::ISODate);
+    for (const QString &record : m_history) {
+        if (record.startsWith(today)) {
+            QStringList parts = record.split(",");
+            if (parts.size() >= 2) m_consumedCalories = parts[1].toInt();
+            if (parts.size() >= 3) m_consumedWater = parts[2].toDouble();
+        }
+    }
+
+    // 3. CRITICAL: Trigger the UI refresh
+    emit historyChanged();
+    emit statsChanged();
+    qDebug() << "Successfully loaded" << m_history.size() << "days of history.";
 }

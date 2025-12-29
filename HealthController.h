@@ -31,9 +31,11 @@ public:
     int dailyTarget() const;
     int consumedCalories() const;
     double hydrationProgress() const;
+    QStringList history() const { return m_history; }
 
 signals:
     void statsChanged(); // Fired whenever data changes to refresh UI
+    void historyChanged();
 
 private:
     void calculateBMR();
@@ -46,6 +48,7 @@ private:
     int m_consumedCalories = 0;
     double m_consumedWater = 0.0;
     int m_bmr = 0;
+    QStringList m_history;
 };
 
 #endif
