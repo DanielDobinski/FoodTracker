@@ -1,10 +1,12 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickStyle>
 #include "healthcontroller.h"
 
 int main(int argc, char *argv[])
 {
+    QQuickStyle::setStyle("Basic");
     QGuiApplication app(argc, argv);
 
     // 1. Create the backend logic object

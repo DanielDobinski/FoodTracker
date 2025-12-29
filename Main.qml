@@ -3,84 +3,247 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 Window {
+    id: window
     width: 400
-    height: 700
+    height: 750
     visible: true
-    title: "TitanTrack MCU"
-    color: "#f4f4f4"
+    title: "TitanTrack - Professional Fitness Tracker"
+    color: "#000000"
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 20
-        spacing: 15
+        spacing: 0
 
-        // Header Section
-        Text {
-            text: "Witaj, Athlete"
-            font.pixelSize: 28
-            font.bold: true
-            Layout.alignment: Qt.AlignHCenter
-        }
-
-        // Stats Card
-        Rectangle {
+        // --- 1. SEKCJA NAGŁÓWKA (30% WYSOKOŚCI) ---
+        Item {
+            id: headerSection
             Layout.fillWidth: true
-            height: 120
-            color: "white"
-            radius: 10
-            border.color: "#ddd"
+            Layout.preferredHeight: parent.height * 0.3
+            clip: true
 
-            Column {
+            Image {
+                id: headerImage
+                source: "images/athlete_background.png"
+                anchors.fill: parent
+                fillMode: Image.PreserveAspectCrop
+                opacity: 1.0
+            }
+
+            // Gradient wtapiający obrazek w czarne tło dołu
+            Rectangle {
+                anchors.fill: parent
+                gradient: Gradient {
+                    GradientStop { position: 0.7; color: "transparent" }
+                    GradientStop { position: 1.0; color: "#000000" }
+                }
+            }
+
+            Text {
+                text: "Witaj, Siłaczu!"
                 anchors.centerIn: parent
-                spacing: 5
-                Text { text: "Current BMI: " + healthCtrl.bmi.toFixed(1); font.pixelSize: 18 }
-                Text {
-                    text: healthCtrl.consumedCalories + " / " + healthCtrl.dailyTarget + " kcal"
-                    font.pixelSize: 22
-                    color: "#2c3e50"
-                    font.bold: true
-                }
+                font.pixelSize: parent.height * 0.15
+                font.bold: true
+                color: "white"
+                style: Text.Outline
+                styleColor: "black"
             }
         }
 
-        // Hydration Widget
-        Text { text: "Hydration (Liters)"; font.bold: true }
-        ProgressBar {
+        // --- 2. SEKCJA INTERAKTYWNA (70% WYSOKOŚCI) ---
+        Item {
             Layout.fillWidth: true
-            value: healthCtrl.hydrationProgress
-            // The color changes as you drink more
-            contentItem: Item {
+            Layout.fillHeight: true
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 25
+                spacing: 20
+
+                // KARTA KALORII (Poprawione skalowanie)
                 Rectangle {
-                    width: parent.visualPosition * parent.width
-                    height: parent.height
-                    color: "#3498db"
-                    radius: 5
+                    id: calorieCard
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.maximumHeight: 140 // Nieco wyższa karta
+                    Layout.minimumHeight: 100
+                    color: "#2980b9"
+                    radius: 15
+                    border.color: "#3498db"
+                    border.width: 2
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        spacing: 2
+
+                        Text {
+                            text: "SPOŻYTE KALORIE"
+                            color: "#d0e4f2"
+                            font.pixelSize: parent.height * 0.18 // Większy label
+                            font.letterSpacing: 1
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+
+                        Text {
+                            id: mainCalorieText
+                            text: healthCtrl.consumedCalories + " / " + healthCtrl.dailyTarget + " kcal"
+                            color: "white"
+                            // Zmieniamy na stałą wartość minimalną + skalowanie, żeby nie był za mały
+                            font.pixelSize: Math.max(24, parent.height * 0.35)
+                            font.bold: true
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+                    }
+                }
+
+                // PASEK HYDRACJI
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 8
+                    Text {
+                        text: "DZISIEJSZA HYDRACJA"
+                        color: "#7f8c8d"
+                        font.pixelSize: 14
+                        font.bold: true
+                    }
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 45
+                        color: "#1a1a1a"
+                        radius: 10
+                        border.color: "#333333"
+
+                        Rectangle {
+                            id: progressBar
+                            width: parent.width * healthCtrl.hydrationProgress
+                            height: parent.height
+                            color: "#27ae60"
+                            radius: 10
+                            Behavior on width { NumberAnimation { duration: 600; easing.type: Easing.OutCubic } }
+                        }
+                        Text {
+                            anchors.centerIn: parent
+                            text: (healthCtrl.hydrationProgress * 3.5).toFixed(1) + " L / 3.5 L"
+                            color: "white"
+                            font.bold: true
+                            font.pixelSize: 16
+                        }
+                    }
+                }
+
+                // PRZYCISKI AKCJI (Rosną razem z oknem)
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.maximumHeight: 90
+                    spacing: 15
+
+                    Button {
+                        id: waterBtn
+                        text: "DODAJ WODĘ"
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        background: Rectangle {
+                            color: parent.pressed ? "#1f5d85" : "#3498db"
+                            radius: 10
+                            border.color: "#ffffff"
+                            border.width: parent.hovered ? 2 : 0
+                        }
+                        contentItem: Text {
+                            text: parent.text
+                            color: "white"
+                            font.pixelSize: parent.height * 0.25
+                            font.bold: true
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        onClicked: healthCtrl.addWater(0.5)
+                    }
+
+                    Button {
+                        id: foodBtn
+                        text: "DODAJ POSIŁEK"
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        background: Rectangle {
+                            color: parent.pressed ? "#d35400" : "#e67e22"
+                            radius: 10
+                            border.color: "#ffffff"
+                            border.width: parent.hovered ? 2 : 0
+                        }
+                        contentItem: Text {
+                            text: parent.text
+                            color: "white"
+                            font.pixelSize: parent.height * 0.25
+                            font.bold: true
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        onClicked: healthCtrl.addMeal(200)
+                    }
+                }
+
+                // PRZYCISK RESET (Jasny i kontrastowy)
+                Button {
+                    text: "RESETUJ POSTĘP DNIA"
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.maximumHeight: 55
+
+                    background: Rectangle {
+                        color: parent.pressed ? "#bdc3c7" : "#ecf0f1"
+                        radius: 10
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#c0392b"
+                        font.pixelSize: parent.height * 0.3
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    onClicked: healthCtrl.resetDay()
+                }
+
+                // ELEMENT ROZPOROWY (Spacer)
+                Item { Layout.fillHeight: true }
+
+                // --- STOPKA (FOOTER) ---
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 4
+                    Layout.bottomMargin: 10
+
+                    Text {
+                        text: "Download more on App Store"
+                        Layout.alignment: Qt.AlignHCenter
+                        color: "#3498db"
+                        font.pixelSize: 14
+                        font.underline: true
+
+                        TapHandler {
+                            onTapped: console.log("Link do App Store")
+                        }
+                    }
+
+                    Text {
+                        text: "TitanTrack Sp. z o.o."
+                        Layout.alignment: Qt.AlignHCenter
+                        color: "#95a5a6"
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+
+                    Text {
+                        text: "ul. Piotrkowska 100, 90-001 Łódź"
+                        Layout.alignment: Qt.AlignHCenter
+                        color: "#7f8c8d"
+                        font.pixelSize: 11
+                    }
                 }
             }
         }
-
-        // Action Buttons
-        RowLayout {
-            spacing: 10
-            Button {
-                text: "Add Snack (200kcal)"
-                Layout.fillWidth: true
-                onClicked: healthCtrl.addMeal(200)
-            }
-            Button {
-                text: "Drink Water (0.5L)"
-                Layout.fillWidth: true
-                onClicked: healthCtrl.addWater(0.5)
-            }
-        }
-
-        Button {
-            text: "Reset Stats"
-            palette.buttonText: "red"
-            Layout.fillWidth: true
-            onClicked: healthCtrl.resetDay()
-        }
-
-        Item { Layout.fillHeight: true } // Spacer
     }
 }
