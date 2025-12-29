@@ -8,6 +8,8 @@ int main(int argc, char *argv[])
 {
     QQuickStyle::setStyle("Basic");
     QGuiApplication app(argc, argv);
+    app.setOrganizationName("HealthTracker");
+    app.setApplicationName("HealthTracker");
 
     // 1. Create the backend logic object
     HealthController healthController;

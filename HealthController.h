@@ -37,7 +37,7 @@ signals:
 
 private:
     void calculateBMR();
-    void saveData();
+    bool saveData();
     void loadData();
 
     double m_weight = 105.0; // Your weight

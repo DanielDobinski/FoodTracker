@@ -78,19 +78,44 @@ void HealthController::resetDay() {
 
 // --- Data Persistence Logic ---
 
-void HealthController::saveData() {
-    // Save to the user's system AppData folder
-    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QDir().mkpath(path); // Ensure the directory exists
+#include <QDebug>
+#include <QFile>
+#include <QTextStream>
+#include <QStandardPaths>
+#include <QDir>
 
-    QFile file(path + "/daily_stats.txt");
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        out << m_consumedCalories << "\n";
-        out << m_consumedWater << "\n";
-        file.close();
-        qDebug() << "Data saved successfully to:" << file.fileName();
+bool HealthController::saveData() {
+    // 1. Get the path and force the folder name
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
+    // Ensure the directory exists
+    QDir dir;
+    if (!dir.exists(path)) {
+        dir.mkpath(path);
     }
+
+    QString filePath = path + "/daily_stats.txt";
+    QFile file(filePath);
+
+    // 2. Open with WriteOnly (truncates existing file)
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qCritical() << "CRITICAL: Could not open file for writing at:" << filePath;
+        qCritical() << "Error message:" << file.errorString();
+        return false;
+    }
+
+    // 3. Write data
+    QTextStream out(&file);
+    out << m_consumedCalories << "\n";
+    out << m_consumedWater << "\n";
+
+    // 4. FORCE the data to the physical disk
+    out.flush();
+    file.flush();
+    file.close();
+    //C:\Users\dobin\AppData\Roaming\HealthTracker\HealthTracker
+    qDebug() << "SUCCESS: Data saved to:" << filePath;
+    return true;
 }
 
 void HealthController::loadData() {
